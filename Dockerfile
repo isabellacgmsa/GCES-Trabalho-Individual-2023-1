@@ -7,7 +7,7 @@ WORKDIR /src
 # Copiar os arquivos do projeto para o contêiner
 COPY . /src
 # Instalar as dependências do projeto
-RUN pip install -r src/requirements.txt
+RUN poetry install
 
 # Definir o comando de inicialização da aplicação
-CMD ["python", "app.py"]
+CMD ["python", "run.py"]

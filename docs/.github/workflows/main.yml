@@ -1,0 +1,82 @@
+name: Python package CI PyContinual
+
+on:
+  push:
+    branches:
+      - master
+  tags:
+    - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        pip install poetry
+        poetry install
+
+    - name: Build package
+      run: poetry build
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        pip install poetry
+        poetry install
+
+    - name: Run tests
+      run: poetry run pytest
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        pip install poetry
+        poetry install
+
+    - name: Run linting
+      run: poetry run flake8
+
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        pip install poetry
+        poetry install
+
+    - name: Generate documentation
+      run: poetry run sphinx-build -b html docs/source docs/build
+    - name: Upload documentation artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: Documentation
+        path: docs/build
