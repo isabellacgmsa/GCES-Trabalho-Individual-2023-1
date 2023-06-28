@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>w2v_util module &mdash; PyContinual 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="utils module" href="utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PyContinual
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">src</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="approaches.html">approaches package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html">config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dataloaders.html">dataloaders package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="import_classification.html">import_classification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="load_base_args.html">load_base_args module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="networks.html">networks package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nlp_data_utils.html">nlp_data_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="preparation.html">preparation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="run.html">run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">w2v_util module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#w2v_util.Tokenizer"><code class="docutils literal notranslate"><span class="pre">Tokenizer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.fit_on_sequences"><code class="docutils literal notranslate"><span class="pre">Tokenizer.fit_on_sequences()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.fit_on_texts"><code class="docutils literal notranslate"><span class="pre">Tokenizer.fit_on_texts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.get_config"><code class="docutils literal notranslate"><span class="pre">Tokenizer.get_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.sequences_to_matrix"><code class="docutils literal notranslate"><span class="pre">Tokenizer.sequences_to_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.sequences_to_texts"><code class="docutils literal notranslate"><span class="pre">Tokenizer.sequences_to_texts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.sequences_to_texts_generator"><code class="docutils literal notranslate"><span class="pre">Tokenizer.sequences_to_texts_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.texts_to_matrix"><code class="docutils literal notranslate"><span class="pre">Tokenizer.texts_to_matrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.texts_to_sequences"><code class="docutils literal notranslate"><span class="pre">Tokenizer.texts_to_sequences()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.texts_to_sequences_generator"><code class="docutils literal notranslate"><span class="pre">Tokenizer.texts_to_sequences_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#w2v_util.Tokenizer.to_json"><code class="docutils literal notranslate"><span class="pre">Tokenizer.to_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#w2v_util.hashing_trick"><code class="docutils literal notranslate"><span class="pre">hashing_trick()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#w2v_util.maketrans"><code class="docutils literal notranslate"><span class="pre">maketrans()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#w2v_util.one_hot"><code class="docutils literal notranslate"><span class="pre">one_hot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#w2v_util.pad_sequences"><code class="docutils literal notranslate"><span class="pre">pad_sequences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#w2v_util.text_to_word_sequence"><code class="docutils literal notranslate"><span class="pre">text_to_word_sequence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#w2v_util.tokenizer_from_json"><code class="docutils literal notranslate"><span class="pre">tokenizer_from_json()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyContinual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">src</a></li>
+      <li class="breadcrumb-item active">w2v_util module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/w2v_util.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-w2v_util">
+<span id="w2v-util-module"></span><h1>w2v_util module<a class="headerlink" href="#module-w2v_util" title="Permalink to this heading"></a></h1>
+<p>Utilities for text input preprocessing.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">w2v_util.</span></span><span class="sig-name descname"><span class="pre">Tokenizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_words</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?&#64;[\\]^_`{|}~\t\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">char_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oov_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analyzer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Text tokenization utility class.</p>
+<p>This class allows to vectorize a text corpus, by turning each
+text into either a sequence of integers (each integer being the index
+of a token in a dictionary) or into a vector where the coefficient
+for each token could be binary, based on word count, based on tf-idf…</p>
+<dl>
+<dt># Arguments</dt><dd><dl class="simple">
+<dt>num_words: the maximum number of words to keep, based</dt><dd><p>on word frequency. Only the most common <cite>num_words-1</cite> words will
+be kept.</p>
+</dd>
+<dt>filters: a string where each element is a character that will be</dt><dd><p>filtered from the texts. The default is all punctuation, plus
+tabs and line breaks, minus the <cite>‘</cite> character.</p>
+</dd>
+</dl>
+<p>lower: boolean. Whether to convert the texts to lowercase.
+split: str. Separator for word splitting.
+char_level: if True, every character will be treated as a token.
+oov_token: if given, it will be added to word_index and used to</p>
+<blockquote>
+<div><p>replace out-of-vocabulary words during text_to_sequence calls</p>
+</div></blockquote>
+<dl class="simple">
+<dt>analyzer: function. Custom analyzer to split the text.</dt><dd><p>The default analyzer is text_to_word_sequence</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>By default, all punctuation is removed, turning the texts into
+space-separated sequences of words
+(words maybe include the <cite>‘</cite> character). These sequences are then
+split into lists of tokens. They will then be indexed or vectorized.</p>
+<p><cite>0</cite> is a reserved index that won’t be assigned to any word.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.fit_on_sequences">
+<span class="sig-name descname"><span class="pre">fit_on_sequences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequences</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.fit_on_sequences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.fit_on_sequences" title="Permalink to this definition"></a></dt>
+<dd><p>Updates internal vocabulary based on a list of sequences.</p>
+<p>Required before using <cite>sequences_to_matrix</cite>
+(if <cite>fit_on_texts</cite> was never called).</p>
+<dl class="simple">
+<dt># Arguments</dt><dd><dl class="simple">
+<dt>sequences: A list of sequence.</dt><dd><p>A “sequence” is a list of integer word indices.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.fit_on_texts">
+<span class="sig-name descname"><span class="pre">fit_on_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.fit_on_texts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.fit_on_texts" title="Permalink to this definition"></a></dt>
+<dd><p>Updates internal vocabulary based on a list of texts.</p>
+<p>In the case where texts contains lists,
+we assume each entry of the lists to be a token.</p>
+<p>Required before using <cite>texts_to_sequences</cite> or <cite>texts_to_matrix</cite>.</p>
+<dl class="simple">
+<dt># Arguments</dt><dd><dl class="simple">
+<dt>texts: can be a list of strings,</dt><dd><p>a generator of strings (for memory-efficiency),
+or a list of list of strings.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.get_config" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the tokenizer configuration as Python dictionary.
+The word count dictionaries used by the tokenizer get serialized
+into plain JSON, so that the configuration can be read by other
+projects.</p>
+<dl class="simple">
+<dt># Returns</dt><dd><p>A Python dictionary with the tokenizer configuration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.sequences_to_matrix">
+<span class="sig-name descname"><span class="pre">sequences_to_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'binary'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.sequences_to_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.sequences_to_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a list of sequences into a Numpy matrix.</p>
+<dl>
+<dt># Arguments</dt><dd><dl class="simple">
+<dt>sequences: list of sequences</dt><dd><p>(a sequence is a list of integer word indices).</p>
+</dd>
+</dl>
+<p>mode: one of “binary”, “count”, “tfidf”, “freq”</p>
+</dd>
+<dt># Returns</dt><dd><p>A Numpy matrix.</p>
+</dd>
+<dt># Raises</dt><dd><dl class="simple">
+<dt>ValueError: In case of invalid <cite>mode</cite> argument,</dt><dd><p>or if the Tokenizer requires to be fit to sample data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.sequences_to_texts">
+<span class="sig-name descname"><span class="pre">sequences_to_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequences</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.sequences_to_texts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.sequences_to_texts" title="Permalink to this definition"></a></dt>
+<dd><p>Transforms each sequence into a list of text.</p>
+<p>Only top <cite>num_words-1</cite> most frequent words will be taken into account.
+Only words known by the tokenizer will be taken into account.</p>
+<dl class="simple">
+<dt># Arguments</dt><dd><p>sequences: A list of sequences (list of integers).</p>
+</dd>
+<dt># Returns</dt><dd><p>A list of texts (strings)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.sequences_to_texts_generator">
+<span class="sig-name descname"><span class="pre">sequences_to_texts_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequences</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.sequences_to_texts_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.sequences_to_texts_generator" title="Permalink to this definition"></a></dt>
+<dd><p>Transforms each sequence in <cite>sequences</cite> to a list of texts(strings).</p>
+<p>Each sequence has to a list of integers.
+In other words, sequences should be a list of sequences</p>
+<p>Only top <cite>num_words-1</cite> most frequent words will be taken into account.
+Only words known by the tokenizer will be taken into account.</p>
+<dl class="simple">
+<dt># Arguments</dt><dd><p>sequences: A list of sequences.</p>
+</dd>
+<dt># Yields</dt><dd><p>Yields individual texts.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.texts_to_matrix">
+<span class="sig-name descname"><span class="pre">texts_to_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'binary'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.texts_to_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.texts_to_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Convert a list of texts to a Numpy matrix.</p>
+<dl class="simple">
+<dt># Arguments</dt><dd><p>texts: list of strings.
+mode: one of “binary”, “count”, “tfidf”, “freq”.</p>
+</dd>
+<dt># Returns</dt><dd><p>A Numpy matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.texts_to_sequences">
+<span class="sig-name descname"><span class="pre">texts_to_sequences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.texts_to_sequences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.texts_to_sequences" title="Permalink to this definition"></a></dt>
+<dd><p>Transforms each text in texts to a sequence of integers.</p>
+<p>Only top <cite>num_words-1</cite> most frequent words will be taken into account.
+Only words known by the tokenizer will be taken into account.</p>
+<dl class="simple">
+<dt># Arguments</dt><dd><p>texts: A list of texts (strings).</p>
+</dd>
+<dt># Returns</dt><dd><p>A list of sequences.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.texts_to_sequences_generator">
+<span class="sig-name descname"><span class="pre">texts_to_sequences_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.texts_to_sequences_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.texts_to_sequences_generator" title="Permalink to this definition"></a></dt>
+<dd><p>Transforms each text in <cite>texts</cite> to a sequence of integers.</p>
+<p>Each item in texts can also be a list,
+in which case we assume each item of that list to be a token.</p>
+<p>Only top <cite>num_words-1</cite> most frequent words will be taken into account.
+Only words known by the tokenizer will be taken into account.</p>
+<dl class="simple">
+<dt># Arguments</dt><dd><p>texts: A list of texts (strings).</p>
+</dd>
+<dt># Yields</dt><dd><p>Yields individual sequences.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="w2v_util.Tokenizer.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#Tokenizer.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.Tokenizer.to_json" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a JSON string containing the tokenizer configuration.
+To load a tokenizer from a JSON string, use
+<cite>keras.preprocessing.text.tokenizer_from_json(json_string)</cite>.</p>
+<dl class="simple">
+<dt># Arguments</dt><dd><dl class="simple">
+<dt><a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: Additional keyword arguments</dt><dd><p>to be passed to <cite>json.dumps()</cite>.</p>
+</dd>
+</dl>
+</dd>
+<dt># Returns</dt><dd><p>A JSON string containing the tokenizer configuration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="w2v_util.hashing_trick">
+<span class="sig-prename descclassname"><span class="pre">w2v_util.</span></span><span class="sig-name descname"><span class="pre">hashing_trick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_function</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?&#64;[\\]^_`{|}~\t\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analyzer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#hashing_trick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.hashing_trick" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a text to a sequence of indexes in a fixed-size hashing space.</p>
+<dl>
+<dt># Arguments</dt><dd><p>text: Input text (string).
+n: Dimension of the hashing space.
+hash_function: defaults to python <cite>hash</cite> function, can be ‘md5’ or</p>
+<blockquote>
+<div><p>any function that takes in input a string and returns a int.
+Note that ‘hash’ is not a stable hashing function, so
+it is not consistent across different runs, while ‘md5’
+is a stable hashing function.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>filters: list (or concatenation) of characters to filter out, such as</dt><dd><p>punctuation. Default: <code class="docutils literal notranslate"><span class="pre">!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?&#64;[\]^_`{|}~\t\n</span></code>,
+includes basic punctuation, tabs, and newlines.</p>
+</dd>
+</dl>
+<p>lower: boolean. Whether to set the text to lowercase.
+split: str. Separator for word splitting.
+analyzer: function. Custom analyzer to split the text</p>
+</dd>
+<dt># Returns</dt><dd><p>A list of integer word indices (unicity non-guaranteed).</p>
+</dd>
+</dl>
+<p><cite>0</cite> is a reserved index that won’t be assigned to any word.</p>
+<p>Two or more words may be assigned to the same index, due to possible
+collisions by the hashing function.
+The [probability](</p>
+<blockquote>
+<div><p><a class="reference external" href="https://en.wikipedia.org/wiki/Birthday_problem#Probability_table">https://en.wikipedia.org/wiki/Birthday_problem#Probability_table</a>)</p>
+</div></blockquote>
+<p>of a collision is in relation to the dimension of the hashing space and
+the number of distinct objects.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="w2v_util.maketrans">
+<span class="sig-prename descclassname"><span class="pre">w2v_util.</span></span><span class="sig-name descname"><span class="pre">maketrans</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#w2v_util.maketrans" title="Permalink to this definition"></a></dt>
+<dd><p>Return a translation table usable for str.translate().</p>
+<p>If there is only one argument, it must be a dictionary mapping Unicode
+ordinals (integers) or characters to Unicode ordinals, strings or None.
+Character keys will be then converted to ordinals.
+If there are two arguments, they must be strings of equal length, and
+in the resulting dictionary, each character in x will be mapped to the
+character at the same position in y. If there is a third argument, it
+must be a string, whose characters will be mapped to None in the result.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="w2v_util.one_hot">
+<span class="sig-prename descclassname"><span class="pre">w2v_util.</span></span><span class="sig-name descname"><span class="pre">one_hot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?&#64;[\\]^_`{|}~\t\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analyzer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#one_hot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.one_hot" title="Permalink to this definition"></a></dt>
+<dd><p>One-hot encodes a text into a list of word indexes of size n.</p>
+<p>This is a wrapper to the <cite>hashing_trick</cite> function using <cite>hash</cite> as the
+hashing function; unicity of word to index mapping non-guaranteed.</p>
+<dl>
+<dt># Arguments</dt><dd><p>text: Input text (string).
+n: int. Size of vocabulary.
+filters: list (or concatenation) of characters to filter out, such as</p>
+<blockquote>
+<div><p>punctuation. Default: <code class="docutils literal notranslate"><span class="pre">!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?&#64;[\]^_`{|}~\t\n</span></code>,
+includes basic punctuation, tabs, and newlines.</p>
+</div></blockquote>
+<p>lower: boolean. Whether to set the text to lowercase.
+split: str. Separator for word splitting.
+analyzer: function. Custom analyzer to split the text</p>
+</dd>
+<dt># Returns</dt><dd><p>List of integers in [1, n]. Each integer encodes a word
+(unicity non-guaranteed).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="w2v_util.pad_sequences">
+<span class="sig-prename descclassname"><span class="pre">w2v_util.</span></span><span class="sig-name descname"><span class="pre">pad_sequences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxlen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'int32'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pre'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncating</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pre'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#pad_sequences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.pad_sequences" title="Permalink to this definition"></a></dt>
+<dd><p>Pads sequences to the same length.
+This function transforms a list of
+<cite>num_samples</cite> sequences (lists of integers)
+into a 2D Numpy array of shape <cite>(num_samples, num_timesteps)</cite>.
+<cite>num_timesteps</cite> is either the <cite>maxlen</cite> argument if provided,
+or the length of the longest sequence otherwise.
+Sequences that are shorter than <cite>num_timesteps</cite>
+are padded with <cite>value</cite> at the beginning or the end
+if padding=’post.
+Sequences longer than <cite>num_timesteps</cite> are truncated
+so that they fit the desired length.
+The position where padding or truncation happens is determined by
+the arguments <cite>padding</cite> and <cite>truncating</cite>, respectively.
+Pre-padding is the default.
+# Arguments</p>
+<blockquote>
+<div><p>sequences: List of lists, where each element is a sequence.
+maxlen: Int, maximum length of all sequences.
+dtype: Type of the output sequences.</p>
+<blockquote>
+<div><p>To pad sequences with variable length strings, you can use <cite>object</cite>.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>padding: String, ‘pre’ or ‘post’:</dt><dd><p>pad either before or after each sequence.</p>
+</dd>
+<dt>truncating: String, ‘pre’ or ‘post’:</dt><dd><p>remove values from sequences larger than
+<cite>maxlen</cite>, either at the beginning or at the end of the sequences.</p>
+</dd>
+</dl>
+<p>value: Float or String, padding value.</p>
+</div></blockquote>
+<dl class="simple">
+<dt># Returns</dt><dd><p>x: Numpy array with shape <cite>(len(sequences), maxlen)</cite></p>
+</dd>
+<dt># Raises</dt><dd><dl class="simple">
+<dt>ValueError: In case of invalid values for <cite>truncating</cite> or <cite>padding</cite>,</dt><dd><p>or in case of invalid shape for a <cite>sequences</cite> entry.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="w2v_util.text_to_word_sequence">
+<span class="sig-prename descclassname"><span class="pre">w2v_util.</span></span><span class="sig-name descname"><span class="pre">text_to_word_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?&#64;[\\]^_`{|}~\t\n'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#text_to_word_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.text_to_word_sequence" title="Permalink to this definition"></a></dt>
+<dd><p>Converts a text to a sequence of words (or tokens).</p>
+<dl>
+<dt># Arguments</dt><dd><p>text: Input text (string).
+filters: list (or concatenation) of characters to filter out, such as</p>
+<blockquote>
+<div><p>punctuation. Default: <code class="docutils literal notranslate"><span class="pre">!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?&#64;[\]^_`{|}~\t\n</span></code>,
+includes basic punctuation, tabs, and newlines.</p>
+</div></blockquote>
+<p>lower: boolean. Whether to convert the input to lowercase.
+split: str. Separator for word splitting.</p>
+</dd>
+<dt># Returns</dt><dd><p>A list of words (or tokens).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="w2v_util.tokenizer_from_json">
+<span class="sig-prename descclassname"><span class="pre">w2v_util.</span></span><span class="sig-name descname"><span class="pre">tokenizer_from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/w2v_util.html#tokenizer_from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#w2v_util.tokenizer_from_json" title="Permalink to this definition"></a></dt>
+<dd><p>Parses a JSON tokenizer configuration file and returns a
+tokenizer instance.</p>
+<dl class="simple">
+<dt># Arguments</dt><dd><p>json_string: JSON string encoding a tokenizer configuration.</p>
+</dd>
+<dt># Returns</dt><dd><p>A Keras Tokenizer instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="utils.html" class="btn btn-neutral float-left" title="utils module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Felipe Andrade &amp; Isabella Carneiro.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

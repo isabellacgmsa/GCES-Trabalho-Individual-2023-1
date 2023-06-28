@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>w2v_util &mdash; PyContinual 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyContinual
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyContinual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">w2v_util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for w2v_util</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Utilities for text input preprocessing.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">range</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">zip</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">six.moves</span> <span class="kn">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">six</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+    <span class="n">maketrans</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">maketrans</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">maketrans</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span>
+
+
+<div class="viewcode-block" id="text_to_word_sequence"><a class="viewcode-back" href="../w2v_util.html#w2v_util.text_to_word_sequence">[docs]</a><span class="k">def</span> <span class="nf">text_to_word_sequence</span><span class="p">(</span><span class="n">text</span><span class="p">,</span>
+                          <span class="n">filters</span><span class="o">=</span><span class="s1">&#39;!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?@[</span><span class="se">\\</span><span class="s1">]^_`{|}~</span><span class="se">\t\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                          <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a text to a sequence of words (or tokens).</span>
+
+<span class="sd">    # Arguments</span>
+<span class="sd">        text: Input text (string).</span>
+<span class="sd">        filters: list (or concatenation) of characters to filter out, such as</span>
+<span class="sd">            punctuation. Default: ``!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~\\t\\n``,</span>
+<span class="sd">            includes basic punctuation, tabs, and newlines.</span>
+<span class="sd">        lower: boolean. Whether to convert the input to lowercase.</span>
+<span class="sd">        split: str. Separator for word splitting.</span>
+
+<span class="sd">    # Returns</span>
+<span class="sd">        A list of words (or tokens).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">lower</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">unicode</span><span class="p">):</span>  <span class="c1"># noqa: F821</span>
+            <span class="n">translate_map</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">):</span> <span class="n">unicode</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">filters</span>  <span class="c1"># noqa: F821</span>
+            <span class="p">}</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">translate_map</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">translate_map</span> <span class="o">=</span> <span class="n">maketrans</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">split</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">filters</span><span class="p">))</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">translate_map</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">split</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">translate_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">split</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">}</span>
+        <span class="n">translate_map</span> <span class="o">=</span> <span class="n">maketrans</span><span class="p">(</span><span class="n">translate_dict</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">translate_map</span><span class="p">)</span>
+
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">seq</span> <span class="k">if</span> <span class="n">i</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="one_hot"><a class="viewcode-back" href="../w2v_util.html#w2v_util.one_hot">[docs]</a><span class="k">def</span> <span class="nf">one_hot</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span>
+            <span class="n">filters</span><span class="o">=</span><span class="s1">&#39;!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?@[</span><span class="se">\\</span><span class="s1">]^_`{|}~</span><span class="se">\t\n</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">split</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span>
+            <span class="n">analyzer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One-hot encodes a text into a list of word indexes of size n.</span>
+
+<span class="sd">    This is a wrapper to the `hashing_trick` function using `hash` as the</span>
+<span class="sd">    hashing function; unicity of word to index mapping non-guaranteed.</span>
+
+<span class="sd">    # Arguments</span>
+<span class="sd">        text: Input text (string).</span>
+<span class="sd">        n: int. Size of vocabulary.</span>
+<span class="sd">        filters: list (or concatenation) of characters to filter out, such as</span>
+<span class="sd">            punctuation. Default: ``!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~\\t\\n``,</span>
+<span class="sd">            includes basic punctuation, tabs, and newlines.</span>
+<span class="sd">        lower: boolean. Whether to set the text to lowercase.</span>
+<span class="sd">        split: str. Separator for word splitting.</span>
+<span class="sd">        analyzer: function. Custom analyzer to split the text</span>
+
+<span class="sd">    # Returns</span>
+<span class="sd">        List of integers in [1, n]. Each integer encodes a word</span>
+<span class="sd">        (unicity non-guaranteed).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">hashing_trick</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span>
+                         <span class="n">hash_function</span><span class="o">=</span><span class="nb">hash</span><span class="p">,</span>
+                         <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
+                         <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span>
+                         <span class="n">split</span><span class="o">=</span><span class="n">split</span><span class="p">,</span>
+                         <span class="n">analyzer</span><span class="o">=</span><span class="n">analyzer</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="hashing_trick"><a class="viewcode-back" href="../w2v_util.html#w2v_util.hashing_trick">[docs]</a><span class="k">def</span> <span class="nf">hashing_trick</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span>
+                  <span class="n">hash_function</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">filters</span><span class="o">=</span><span class="s1">&#39;!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?@[</span><span class="se">\\</span><span class="s1">]^_`{|}~</span><span class="se">\t\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                  <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="n">split</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span>
+                  <span class="n">analyzer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a text to a sequence of indexes in a fixed-size hashing space.</span>
+
+<span class="sd">    # Arguments</span>
+<span class="sd">        text: Input text (string).</span>
+<span class="sd">        n: Dimension of the hashing space.</span>
+<span class="sd">        hash_function: defaults to python `hash` function, can be &#39;md5&#39; or</span>
+<span class="sd">            any function that takes in input a string and returns a int.</span>
+<span class="sd">            Note that &#39;hash&#39; is not a stable hashing function, so</span>
+<span class="sd">            it is not consistent across different runs, while &#39;md5&#39;</span>
+<span class="sd">            is a stable hashing function.</span>
+<span class="sd">        filters: list (or concatenation) of characters to filter out, such as</span>
+<span class="sd">            punctuation. Default: ``!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~\\t\\n``,</span>
+<span class="sd">            includes basic punctuation, tabs, and newlines.</span>
+<span class="sd">        lower: boolean. Whether to set the text to lowercase.</span>
+<span class="sd">        split: str. Separator for word splitting.</span>
+<span class="sd">        analyzer: function. Custom analyzer to split the text</span>
+
+<span class="sd">    # Returns</span>
+<span class="sd">        A list of integer word indices (unicity non-guaranteed).</span>
+
+<span class="sd">    `0` is a reserved index that won&#39;t be assigned to any word.</span>
+
+<span class="sd">    Two or more words may be assigned to the same index, due to possible</span>
+<span class="sd">    collisions by the hashing function.</span>
+<span class="sd">    The [probability](</span>
+<span class="sd">        https://en.wikipedia.org/wiki/Birthday_problem#Probability_table)</span>
+<span class="sd">    of a collision is in relation to the dimension of the hashing space and</span>
+<span class="sd">    the number of distinct objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">hash_function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">hash_function</span> <span class="o">=</span> <span class="nb">hash</span>
+    <span class="k">elif</span> <span class="n">hash_function</span> <span class="o">==</span> <span class="s1">&#39;md5&#39;</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">hash_function</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">md5</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="mi">16</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">analyzer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">text_to_word_sequence</span><span class="p">(</span><span class="n">text</span><span class="p">,</span>
+                                    <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
+                                    <span class="n">lower</span><span class="o">=</span><span class="n">lower</span><span class="p">,</span>
+                                    <span class="n">split</span><span class="o">=</span><span class="n">split</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">analyzer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[(</span><span class="n">hash_function</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Tokenizer"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer">[docs]</a><span class="k">class</span> <span class="nc">Tokenizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Text tokenization utility class.</span>
+
+<span class="sd">    This class allows to vectorize a text corpus, by turning each</span>
+<span class="sd">    text into either a sequence of integers (each integer being the index</span>
+<span class="sd">    of a token in a dictionary) or into a vector where the coefficient</span>
+<span class="sd">    for each token could be binary, based on word count, based on tf-idf...</span>
+
+<span class="sd">    # Arguments</span>
+<span class="sd">        num_words: the maximum number of words to keep, based</span>
+<span class="sd">            on word frequency. Only the most common `num_words-1` words will</span>
+<span class="sd">            be kept.</span>
+<span class="sd">        filters: a string where each element is a character that will be</span>
+<span class="sd">            filtered from the texts. The default is all punctuation, plus</span>
+<span class="sd">            tabs and line breaks, minus the `&#39;` character.</span>
+<span class="sd">        lower: boolean. Whether to convert the texts to lowercase.</span>
+<span class="sd">        split: str. Separator for word splitting.</span>
+<span class="sd">        char_level: if True, every character will be treated as a token.</span>
+<span class="sd">        oov_token: if given, it will be added to word_index and used to</span>
+<span class="sd">            replace out-of-vocabulary words during text_to_sequence calls</span>
+<span class="sd">        analyzer: function. Custom analyzer to split the text.</span>
+<span class="sd">            The default analyzer is text_to_word_sequence</span>
+
+<span class="sd">    By default, all punctuation is removed, turning the texts into</span>
+<span class="sd">    space-separated sequences of words</span>
+<span class="sd">    (words maybe include the `&#39;` character). These sequences are then</span>
+<span class="sd">    split into lists of tokens. They will then be indexed or vectorized.</span>
+
+<span class="sd">    `0` is a reserved index that won&#39;t be assigned to any word.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_words</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">filters</span><span class="o">=</span><span class="s1">&#39;!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?@[</span><span class="se">\\</span><span class="s1">]^_`{|}~</span><span class="se">\t\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                 <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">split</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">,</span>
+                 <span class="n">char_level</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">oov_token</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">analyzer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Legacy support</span>
+        <span class="k">if</span> <span class="s1">&#39;nb_words&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;The `nb_words` argument in `Tokenizer` &#39;</span>
+                          <span class="s1">&#39;has been renamed `num_words`.&#39;</span><span class="p">)</span>
+            <span class="n">num_words</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;nb_words&#39;</span><span class="p">)</span>
+        <span class="n">document_count</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;document_count&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unrecognized keyword arguments: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_counts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_docs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filters</span> <span class="o">=</span> <span class="n">filters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">split</span> <span class="o">=</span> <span class="n">split</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="o">=</span> <span class="n">lower</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_words</span> <span class="o">=</span> <span class="n">num_words</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">document_count</span> <span class="o">=</span> <span class="n">document_count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">char_level</span> <span class="o">=</span> <span class="n">char_level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oov_token</span> <span class="o">=</span> <span class="n">oov_token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_docs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_index</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_word</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analyzer</span> <span class="o">=</span> <span class="n">analyzer</span>
+
+<div class="viewcode-block" id="Tokenizer.fit_on_texts"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.fit_on_texts">[docs]</a>    <span class="k">def</span> <span class="nf">fit_on_texts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates internal vocabulary based on a list of texts.</span>
+
+<span class="sd">        In the case where texts contains lists,</span>
+<span class="sd">        we assume each entry of the lists to be a token.</span>
+
+<span class="sd">        Required before using `texts_to_sequences` or `texts_to_matrix`.</span>
+
+<span class="sd">        # Arguments</span>
+<span class="sd">            texts: can be a list of strings,</span>
+<span class="sd">                a generator of strings (for memory-efficiency),</span>
+<span class="sd">                or a list of list of strings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">document_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">char_level</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">text_elem</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">text_elem</span> <span class="ow">in</span> <span class="n">text</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">seq</span> <span class="o">=</span> <span class="n">text</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">seq</span> <span class="o">=</span> <span class="n">text_to_word_sequence</span><span class="p">(</span><span class="n">text</span><span class="p">,</span>
+                                                <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">,</span>
+                                                <span class="n">lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span>
+                                                <span class="n">split</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_counts</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">word_counts</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">word_counts</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
+                <span class="c1"># In how many documents each word occurs</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">word_docs</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">wcounts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">word_counts</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="n">wcounts</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># forcing the oov_token to index 1 if it exists</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">oov_token</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sorted_voc</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sorted_voc</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">oov_token</span><span class="p">]</span>
+        <span class="n">sorted_voc</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">wc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">wc</span> <span class="ow">in</span> <span class="n">wcounts</span><span class="p">)</span>
+
+        <span class="c1"># note that index 0 is reserved, never assigned to an existing word</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">word_index</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">sorted_voc</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_voc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_word</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">w</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_index</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">word_docs</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index_docs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">word_index</span><span class="p">[</span><span class="n">w</span><span class="p">]]</span> <span class="o">=</span> <span class="n">c</span></div>
+
+<div class="viewcode-block" id="Tokenizer.fit_on_sequences"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.fit_on_sequences">[docs]</a>    <span class="k">def</span> <span class="nf">fit_on_sequences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequences</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates internal vocabulary based on a list of sequences.</span>
+
+<span class="sd">        Required before using `sequences_to_matrix`</span>
+<span class="sd">        (if `fit_on_texts` was never called).</span>
+
+<span class="sd">        # Arguments</span>
+<span class="sd">            sequences: A list of sequence.</span>
+<span class="sd">                A &quot;sequence&quot; is a list of integer word indices.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">document_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index_docs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="Tokenizer.texts_to_sequences"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.texts_to_sequences">[docs]</a>    <span class="k">def</span> <span class="nf">texts_to_sequences</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms each text in texts to a sequence of integers.</span>
+
+<span class="sd">        Only top `num_words-1` most frequent words will be taken into account.</span>
+<span class="sd">        Only words known by the tokenizer will be taken into account.</span>
+
+<span class="sd">        # Arguments</span>
+<span class="sd">            texts: A list of texts (strings).</span>
+
+<span class="sd">        # Returns</span>
+<span class="sd">            A list of sequences.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">texts_to_sequences_generator</span><span class="p">(</span><span class="n">texts</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Tokenizer.texts_to_sequences_generator"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.texts_to_sequences_generator">[docs]</a>    <span class="k">def</span> <span class="nf">texts_to_sequences_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms each text in `texts` to a sequence of integers.</span>
+
+<span class="sd">        Each item in texts can also be a list,</span>
+<span class="sd">        in which case we assume each item of that list to be a token.</span>
+
+<span class="sd">        Only top `num_words-1` most frequent words will be taken into account.</span>
+<span class="sd">        Only words known by the tokenizer will be taken into account.</span>
+
+<span class="sd">        # Arguments</span>
+<span class="sd">            texts: A list of texts (strings).</span>
+
+<span class="sd">        # Yields</span>
+<span class="sd">            Yields individual sequences.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_words</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_words</span>
+        <span class="n">oov_token_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oov_token</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">char_level</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="n">text_elem</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">text_elem</span> <span class="ow">in</span> <span class="n">text</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">seq</span> <span class="o">=</span> <span class="n">text</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">seq</span> <span class="o">=</span> <span class="n">text_to_word_sequence</span><span class="p">(</span><span class="n">text</span><span class="p">,</span>
+                                                <span class="n">filters</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">,</span>
+                                                <span class="n">lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span>
+                                                <span class="n">split</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">seq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analyzer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">vect</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">num_words</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">num_words</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">oov_token_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">vect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oov_token_index</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">oov_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">vect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oov_token_index</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">vect</span></div>
+
+<div class="viewcode-block" id="Tokenizer.sequences_to_texts"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.sequences_to_texts">[docs]</a>    <span class="k">def</span> <span class="nf">sequences_to_texts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequences</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms each sequence into a list of text.</span>
+
+<span class="sd">        Only top `num_words-1` most frequent words will be taken into account.</span>
+<span class="sd">        Only words known by the tokenizer will be taken into account.</span>
+
+<span class="sd">        # Arguments</span>
+<span class="sd">            sequences: A list of sequences (list of integers).</span>
+
+<span class="sd">        # Returns</span>
+<span class="sd">            A list of texts (strings)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sequences_to_texts_generator</span><span class="p">(</span><span class="n">sequences</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Tokenizer.sequences_to_texts_generator"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.sequences_to_texts_generator">[docs]</a>    <span class="k">def</span> <span class="nf">sequences_to_texts_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequences</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms each sequence in `sequences` to a list of texts(strings).</span>
+
+<span class="sd">        Each sequence has to a list of integers.</span>
+<span class="sd">        In other words, sequences should be a list of sequences</span>
+
+<span class="sd">        Only top `num_words-1` most frequent words will be taken into account.</span>
+<span class="sd">        Only words known by the tokenizer will be taken into account.</span>
+
+<span class="sd">        # Arguments</span>
+<span class="sd">            sequences: A list of sequences.</span>
+
+<span class="sd">        # Yields</span>
+<span class="sd">            Yields individual texts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_words</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_words</span>
+        <span class="n">oov_token_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">oov_token</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>
+            <span class="n">vect</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+                <span class="n">word</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_word</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">word</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">num_words</span> <span class="ow">and</span> <span class="n">num</span> <span class="o">&gt;=</span> <span class="n">num_words</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">oov_token_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">vect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_word</span><span class="p">[</span><span class="n">oov_token_index</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">oov_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">vect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_word</span><span class="p">[</span><span class="n">oov_token_index</span><span class="p">])</span>
+            <span class="n">vect</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">vect</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">vect</span></div>
+
+<div class="viewcode-block" id="Tokenizer.texts_to_matrix"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.texts_to_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">texts_to_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;binary&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a list of texts to a Numpy matrix.</span>
+
+<span class="sd">        # Arguments</span>
+<span class="sd">            texts: list of strings.</span>
+<span class="sd">            mode: one of &quot;binary&quot;, &quot;count&quot;, &quot;tfidf&quot;, &quot;freq&quot;.</span>
+
+<span class="sd">        # Returns</span>
+<span class="sd">            A Numpy matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sequences</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sequences_to_matrix</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Tokenizer.sequences_to_matrix"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.sequences_to_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">sequences_to_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequences</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;binary&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts a list of sequences into a Numpy matrix.</span>
+
+<span class="sd">        # Arguments</span>
+<span class="sd">            sequences: list of sequences</span>
+<span class="sd">                (a sequence is a list of integer word indices).</span>
+<span class="sd">            mode: one of &quot;binary&quot;, &quot;count&quot;, &quot;tfidf&quot;, &quot;freq&quot;</span>
+
+<span class="sd">        # Returns</span>
+<span class="sd">            A Numpy matrix.</span>
+
+<span class="sd">        # Raises</span>
+<span class="sd">            ValueError: In case of invalid `mode` argument,</span>
+<span class="sd">                or if the Tokenizer requires to be fit to sample data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_words</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_index</span><span class="p">:</span>
+                <span class="n">num_words</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">word_index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Specify a dimension (`num_words` argument), &#39;</span>
+                                 <span class="s1">&#39;or fit on some text data first.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_words</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_words</span>
+
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;tfidf&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_count</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Fit the Tokenizer on some data &#39;</span>
+                             <span class="s1">&#39;before using tfidf mode.&#39;</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">),</span> <span class="n">num_words</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sequences</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">seq</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">seq</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">num_words</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">counts</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;count&#39;</span><span class="p">:</span>
+                    <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span>
+                <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;freq&#39;</span><span class="p">:</span>
+                    <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;binary&#39;</span><span class="p">:</span>
+                    <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;tfidf&#39;</span><span class="p">:</span>
+                    <span class="c1"># Use weighting scheme 2 in</span>
+                    <span class="c1"># https://en.wikipedia.org/wiki/Tf%E2%80%93idf</span>
+                    <span class="n">tf</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                    <span class="n">idf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_count</span> <span class="o">/</span>
+                                 <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">index_docs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span>
+                    <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span> <span class="o">*</span> <span class="n">idf</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown vectorization mode:&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="Tokenizer.get_config"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.get_config">[docs]</a>    <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns the tokenizer configuration as Python dictionary.</span>
+<span class="sd">        The word count dictionaries used by the tokenizer get serialized</span>
+<span class="sd">        into plain JSON, so that the configuration can be read by other</span>
+<span class="sd">        projects.</span>
+
+<span class="sd">        # Returns</span>
+<span class="sd">            A Python dictionary with the tokenizer configuration.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">json_word_counts</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">word_counts</span><span class="p">)</span>
+        <span class="n">json_word_docs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">word_docs</span><span class="p">)</span>
+        <span class="n">json_index_docs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_docs</span><span class="p">)</span>
+        <span class="n">json_word_index</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">word_index</span><span class="p">)</span>
+        <span class="n">json_index_word</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_word</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;num_words&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_words</span><span class="p">,</span>
+            <span class="s1">&#39;filters&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">filters</span><span class="p">,</span>
+            <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span>
+            <span class="s1">&#39;split&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="p">,</span>
+            <span class="s1">&#39;char_level&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">char_level</span><span class="p">,</span>
+            <span class="s1">&#39;oov_token&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">oov_token</span><span class="p">,</span>
+            <span class="s1">&#39;document_count&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_count</span><span class="p">,</span>
+            <span class="s1">&#39;word_counts&#39;</span><span class="p">:</span> <span class="n">json_word_counts</span><span class="p">,</span>
+            <span class="s1">&#39;word_docs&#39;</span><span class="p">:</span> <span class="n">json_word_docs</span><span class="p">,</span>
+            <span class="s1">&#39;index_docs&#39;</span><span class="p">:</span> <span class="n">json_index_docs</span><span class="p">,</span>
+            <span class="s1">&#39;index_word&#39;</span><span class="p">:</span> <span class="n">json_index_word</span><span class="p">,</span>
+            <span class="s1">&#39;word_index&#39;</span><span class="p">:</span> <span class="n">json_word_index</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="Tokenizer.to_json"><a class="viewcode-back" href="../w2v_util.html#w2v_util.Tokenizer.to_json">[docs]</a>    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a JSON string containing the tokenizer configuration.</span>
+<span class="sd">        To load a tokenizer from a JSON string, use</span>
+<span class="sd">        `keras.preprocessing.text.tokenizer_from_json(json_string)`.</span>
+
+<span class="sd">        # Arguments</span>
+<span class="sd">            **kwargs: Additional keyword arguments</span>
+<span class="sd">                to be passed to `json.dumps()`.</span>
+
+<span class="sd">        # Returns</span>
+<span class="sd">            A JSON string containing the tokenizer configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span>
+        <span class="n">tokenizer_config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;class_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="n">config</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">tokenizer_config</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="tokenizer_from_json"><a class="viewcode-back" href="../w2v_util.html#w2v_util.tokenizer_from_json">[docs]</a><span class="k">def</span> <span class="nf">tokenizer_from_json</span><span class="p">(</span><span class="n">json_string</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parses a JSON tokenizer configuration file and returns a</span>
+<span class="sd">    tokenizer instance.</span>
+
+<span class="sd">    # Arguments</span>
+<span class="sd">        json_string: JSON string encoding a tokenizer configuration.</span>
+
+<span class="sd">    # Returns</span>
+<span class="sd">        A Keras Tokenizer instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tokenizer_config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_string</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">tokenizer_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
+
+    <span class="n">word_counts</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;word_counts&#39;</span><span class="p">))</span>
+    <span class="n">word_docs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;word_docs&#39;</span><span class="p">))</span>
+    <span class="n">index_docs</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;index_docs&#39;</span><span class="p">))</span>
+    <span class="c1"># Integer indexing gets converted to strings with json.dumps()</span>
+    <span class="n">index_docs</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">index_docs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">index_word</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;index_word&#39;</span><span class="p">))</span>
+    <span class="n">index_word</span> <span class="o">=</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">index_word</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">word_index</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;word_index&#39;</span><span class="p">))</span>
+
+    <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">tokenizer</span><span class="o">.</span><span class="n">word_counts</span> <span class="o">=</span> <span class="n">word_counts</span>
+    <span class="n">tokenizer</span><span class="o">.</span><span class="n">word_docs</span> <span class="o">=</span> <span class="n">word_docs</span>
+    <span class="n">tokenizer</span><span class="o">.</span><span class="n">index_docs</span> <span class="o">=</span> <span class="n">index_docs</span>
+    <span class="n">tokenizer</span><span class="o">.</span><span class="n">word_index</span> <span class="o">=</span> <span class="n">word_index</span>
+    <span class="n">tokenizer</span><span class="o">.</span><span class="n">index_word</span> <span class="o">=</span> <span class="n">index_word</span>
+
+    <span class="k">return</span> <span class="n">tokenizer</span></div>
+
+<div class="viewcode-block" id="pad_sequences"><a class="viewcode-back" href="../w2v_util.html#w2v_util.pad_sequences">[docs]</a><span class="k">def</span> <span class="nf">pad_sequences</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int32&#39;</span><span class="p">,</span>
+                  <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="n">truncating</span><span class="o">=</span><span class="s1">&#39;pre&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pads sequences to the same length.</span>
+<span class="sd">    This function transforms a list of</span>
+<span class="sd">    `num_samples` sequences (lists of integers)</span>
+<span class="sd">    into a 2D Numpy array of shape `(num_samples, num_timesteps)`.</span>
+<span class="sd">    `num_timesteps` is either the `maxlen` argument if provided,</span>
+<span class="sd">    or the length of the longest sequence otherwise.</span>
+<span class="sd">    Sequences that are shorter than `num_timesteps`</span>
+<span class="sd">    are padded with `value` at the beginning or the end</span>
+<span class="sd">    if padding=&#39;post.</span>
+<span class="sd">    Sequences longer than `num_timesteps` are truncated</span>
+<span class="sd">    so that they fit the desired length.</span>
+<span class="sd">    The position where padding or truncation happens is determined by</span>
+<span class="sd">    the arguments `padding` and `truncating`, respectively.</span>
+<span class="sd">    Pre-padding is the default.</span>
+<span class="sd">    # Arguments</span>
+<span class="sd">        sequences: List of lists, where each element is a sequence.</span>
+<span class="sd">        maxlen: Int, maximum length of all sequences.</span>
+<span class="sd">        dtype: Type of the output sequences.</span>
+<span class="sd">            To pad sequences with variable length strings, you can use `object`.</span>
+<span class="sd">        padding: String, &#39;pre&#39; or &#39;post&#39;:</span>
+<span class="sd">            pad either before or after each sequence.</span>
+<span class="sd">        truncating: String, &#39;pre&#39; or &#39;post&#39;:</span>
+<span class="sd">            remove values from sequences larger than</span>
+<span class="sd">            `maxlen`, either at the beginning or at the end of the sequences.</span>
+<span class="sd">        value: Float or String, padding value.</span>
+<span class="sd">    # Returns</span>
+<span class="sd">        x: Numpy array with shape `(len(sequences), maxlen)`</span>
+<span class="sd">    # Raises</span>
+<span class="sd">        ValueError: In case of invalid values for `truncating` or `padding`,</span>
+<span class="sd">            or in case of invalid shape for a `sequences` entry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sequences</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`sequences` must be iterable.&#39;</span><span class="p">)</span>
+    <span class="n">num_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequences</span><span class="p">)</span>
+
+    <span class="n">lengths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sample_shape</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="n">flag</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># take the sample shape from the first non empty sequence</span>
+    <span class="c1"># checking for consistency in the main loop below.</span>
+
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">flag</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="n">sample_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">flag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`sequences` must be a list of iterables. &#39;</span>
+                             <span class="s1">&#39;Found non-iterable: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">maxlen</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">maxlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span>
+
+    <span class="n">is_dtype_str</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">unicode_</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dtype</span> <span class="o">!=</span> <span class="nb">object</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_dtype_str</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`dtype` </span><span class="si">{}</span><span class="s2"> is not compatible with `value`&#39;s type: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;You should set `dtype=object` for variable length strings.&quot;</span>
+                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">maxlen</span><span class="p">)</span> <span class="o">+</span> <span class="n">sample_shape</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sequences</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="k">continue</span>  <span class="c1"># empty list/array was found</span>
+        <span class="k">if</span> <span class="n">truncating</span> <span class="o">==</span> <span class="s1">&#39;pre&#39;</span><span class="p">:</span>
+            <span class="n">trunc</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="n">maxlen</span><span class="p">:]</span>
+        <span class="k">elif</span> <span class="n">truncating</span> <span class="o">==</span> <span class="s1">&#39;post&#39;</span><span class="p">:</span>
+            <span class="n">trunc</span> <span class="o">=</span> <span class="n">s</span><span class="p">[:</span><span class="n">maxlen</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Truncating type &quot;</span><span class="si">%s</span><span class="s1">&quot; &#39;</span>
+                             <span class="s1">&#39;not understood&#39;</span> <span class="o">%</span> <span class="n">truncating</span><span class="p">)</span>
+
+        <span class="c1"># check `trunc` has expected shape</span>
+        <span class="n">trunc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">trunc</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">trunc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">!=</span> <span class="n">sample_shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Shape of sample </span><span class="si">%s</span><span class="s1"> of sequence at position </span><span class="si">%s</span><span class="s1"> &#39;</span>
+                             <span class="s1">&#39;is different from expected shape </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+                             <span class="p">(</span><span class="n">trunc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sample_shape</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">padding</span> <span class="o">==</span> <span class="s1">&#39;post&#39;</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">trunc</span><span class="p">)]</span> <span class="o">=</span> <span class="n">trunc</span>
+        <span class="k">elif</span> <span class="n">padding</span> <span class="o">==</span> <span class="s1">&#39;pre&#39;</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">trunc</span><span class="p">):]</span> <span class="o">=</span> <span class="n">trunc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Padding type &quot;</span><span class="si">%s</span><span class="s1">&quot; not understood&#39;</span> <span class="o">%</span> <span class="n">padding</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Felipe Andrade &amp; Isabella Carneiro.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

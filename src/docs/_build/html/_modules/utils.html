@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils &mdash; PyContinual 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PyContinual
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">src</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PyContinual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span><span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="print_model_report"><a class="viewcode-back" href="../utils.html#utils.print_model_report">[docs]</a><span class="k">def</span> <span class="nf">print_model_report</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dimensions =&#39;</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">count</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">count</span><span class="o">+=</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Num parameters = </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">human_format</span><span class="p">(</span><span class="n">count</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">count</span></div>
+
+<div class="viewcode-block" id="human_format"><a class="viewcode-back" href="../utils.html#utils.human_format">[docs]</a><span class="k">def</span> <span class="nf">human_format</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+    <span class="n">magnitude</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">while</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">1000</span><span class="p">:</span>
+        <span class="n">magnitude</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="n">num</span><span class="o">/=</span><span class="mf">1000.0</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%.1f%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">num</span><span class="p">,[</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;K&#39;</span><span class="p">,</span><span class="s1">&#39;M&#39;</span><span class="p">,</span><span class="s1">&#39;G&#39;</span><span class="p">,</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="s1">&#39;P&#39;</span><span class="p">][</span><span class="n">magnitude</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="print_optimizer_config"><a class="viewcode-back" href="../utils.html#utils.print_optimizer_config">[docs]</a><span class="k">def</span> <span class="nf">print_optimizer_config</span><span class="p">(</span><span class="n">optim</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">optim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">optim</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">optim</span><span class="p">,</span><span class="s1">&#39;=&#39;</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">opt</span><span class="o">=</span><span class="n">optim</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">opt</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;param&#39;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="s1">&#39;:&#39;</span><span class="p">,</span><span class="n">opt</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+    <span class="k">return</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="get_model"><a class="viewcode-back" href="../utils.html#utils.get_model">[docs]</a><span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="set_model_"><a class="viewcode-back" href="../utils.html#utils.set_model_">[docs]</a><span class="k">def</span> <span class="nf">set_model_</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">state_dict</span><span class="p">):</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">state_dict</span><span class="p">))</span>
+    <span class="k">return</span></div>
+
+<div class="viewcode-block" id="freeze_model"><a class="viewcode-back" href="../utils.html#utils.freeze_model">[docs]</a><span class="k">def</span> <span class="nf">freeze_model</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+        <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="compute_conv_output_size"><a class="viewcode-back" href="../utils.html#utils.compute_conv_output_size">[docs]</a><span class="k">def</span> <span class="nf">compute_conv_output_size</span><span class="p">(</span><span class="n">Lin</span><span class="p">,</span><span class="n">kernel_size</span><span class="p">,</span><span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">dilation</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">Lin</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">padding</span><span class="o">-</span><span class="n">dilation</span><span class="o">*</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">stride</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="compute_mean_std_dataset"><a class="viewcode-back" href="../utils.html#utils.compute_mean_std_dataset">[docs]</a><span class="k">def</span> <span class="nf">compute_mean_std_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+    <span class="c1"># dataset already put ToTensor</span>
+    <span class="n">mean</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">std</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">image</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+        <span class="n">mean</span><span class="o">+=</span><span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">mean</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+    <span class="n">mean_expanded</span><span class="o">=</span><span class="n">mean</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">mean</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="n">mean</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">image</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+        <span class="n">std</span><span class="o">+=</span><span class="p">(</span><span class="n">image</span><span class="o">-</span><span class="n">mean_expanded</span><span class="p">)</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">std</span><span class="o">=</span><span class="p">(</span><span class="n">std</span><span class="o">/</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="o">*</span><span class="n">image</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">image</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<span class="c1"># for ACL</span>
+<div class="viewcode-block" id="report_tr"><a class="viewcode-back" href="../utils.html#utils.report_tr">[docs]</a><span class="k">def</span> <span class="nf">report_tr</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">sbatch</span><span class="p">,</span> <span class="n">clock0</span><span class="p">,</span> <span class="n">clock1</span><span class="p">):</span>
+    <span class="c1"># Training performance</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s1">&#39;| Epoch </span><span class="si">{:3d}</span><span class="s1">, time=</span><span class="si">{:5.1f}</span><span class="s1">ms/</span><span class="si">{:5.1f}</span><span class="s1">ms | Train losses=</span><span class="si">{:.3f}</span><span class="s1"> | T: loss=</span><span class="si">{:.3f}</span><span class="s1">, acc=</span><span class="si">{:5.2f}</span><span class="s1">% | D: loss=</span><span class="si">{:.3f}</span><span class="s1">, acc=</span><span class="si">{:5.1f}</span><span class="s1">%, &#39;</span>
+        <span class="s1">&#39;Diff loss:</span><span class="si">{:.3f}</span><span class="s1"> |&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">e</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="mi">1000</span> <span class="o">*</span> <span class="n">sbatch</span> <span class="o">*</span> <span class="p">(</span><span class="n">clock1</span> <span class="o">-</span> <span class="n">clock0</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">],</span>
+            <span class="mi">1000</span> <span class="o">*</span> <span class="n">sbatch</span> <span class="o">*</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">clock1</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;loss_tot&#39;</span><span class="p">],</span>
+            <span class="n">res</span><span class="p">[</span><span class="s1">&#39;loss_t&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;acc_t&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;loss_a&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;acc_d&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;loss_d&#39;</span><span class="p">]),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="report_val"><a class="viewcode-back" href="../utils.html#utils.report_val">[docs]</a><span class="k">def</span> <span class="nf">report_val</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+    <span class="c1"># Validation performance</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; Valid losses=</span><span class="si">{:.3f}</span><span class="s1"> | T: loss=</span><span class="si">{:.6f}</span><span class="s1">, acc=</span><span class="si">{:5.2f}</span><span class="s1">%, | D: loss=</span><span class="si">{:.3f}</span><span class="s1">, acc=</span><span class="si">{:5.2f}</span><span class="s1">%, Diff loss=</span><span class="si">{:.3f}</span><span class="s1"> |&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">res</span><span class="p">[</span><span class="s1">&#39;loss_tot&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;loss_t&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;acc_t&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;loss_a&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;acc_d&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;loss_d&#39;</span><span class="p">]),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+
+
+<div class="viewcode-block" id="fisher_matrix_diag_bert_ner"><a class="viewcode-back" href="../utils.html#utils.fisher_matrix_diag_bert_ner">[docs]</a><span class="k">def</span> <span class="nf">fisher_matrix_diag_bert_ner</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">train</span><span class="p">,</span><span class="n">device</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">criterion</span><span class="p">,</span><span class="n">sbatch</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="c1"># Init</span>
+    <span class="n">fisher</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Compute</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">),</span><span class="n">sbatch</span><span class="p">),</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Fisher diagonal&#39;</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="n">sbatch</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)])))</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">train</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">bat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">bat</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+        <span class="n">input_ids</span><span class="p">,</span> <span class="n">segment_ids</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span><span class="n">valid_ids</span><span class="p">,</span><span class="n">label_mask</span><span class="p">,</span> <span class="n">_</span><span class="o">=</span> <span class="n">batch</span>
+
+        <span class="c1"># Forward and backward</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">segment_ids</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">,</span><span class="n">valid_ids</span><span class="p">,</span><span class="n">label_mask</span><span class="p">)</span>
+
+        <span class="n">loss</span><span class="o">=</span><span class="n">criterion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">outputs</span><span class="p">[</span><span class="n">t</span><span class="p">],</span><span class="n">targets</span><span class="p">,</span><span class="n">label_mask</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Get gradients</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+=</span><span class="n">sbatch</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Mean</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fisher</span></div>
+
+
+<div class="viewcode-block" id="fisher_matrix_diag_ner_w2v"><a class="viewcode-back" href="../utils.html#utils.fisher_matrix_diag_ner_w2v">[docs]</a><span class="k">def</span> <span class="nf">fisher_matrix_diag_ner_w2v</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">train</span><span class="p">,</span><span class="n">device</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">criterion</span><span class="p">,</span><span class="n">sbatch</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="c1"># Init</span>
+    <span class="n">fisher</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Compute</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">),</span><span class="n">sbatch</span><span class="p">),</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Fisher diagonal&#39;</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="n">sbatch</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)])))</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">train</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">bat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">bat</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+        <span class="n">tokens_sentence_ids</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span><span class="n">label_mask</span> <span class="o">=</span> <span class="n">batch</span>
+
+        <span class="c1"># Forward and backward</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">tokens_sentence_ids</span><span class="p">,</span><span class="n">label_mask</span><span class="p">)</span>
+
+        <span class="n">loss</span><span class="o">=</span><span class="n">criterion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">outputs</span><span class="p">[</span><span class="n">t</span><span class="p">],</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Get gradients</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+=</span><span class="n">sbatch</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Mean</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fisher</span></div>
+
+
+
+<div class="viewcode-block" id="fisher_matrix_diag_bert"><a class="viewcode-back" href="../utils.html#utils.fisher_matrix_diag_bert">[docs]</a><span class="k">def</span> <span class="nf">fisher_matrix_diag_bert</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">train</span><span class="p">,</span><span class="n">device</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">criterion</span><span class="p">,</span><span class="n">sbatch</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="c1"># Init</span>
+    <span class="n">fisher</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Compute</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">),</span><span class="n">sbatch</span><span class="p">),</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Fisher diagonal&#39;</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="n">sbatch</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)])))</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">train</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">bat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">bat</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+        <span class="n">input_ids</span><span class="p">,</span> <span class="n">segment_ids</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span><span class="n">_</span><span class="o">=</span> <span class="n">batch</span>
+
+        <span class="c1"># Forward and backward</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">output_dict</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">segment_ids</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+
+        <span class="n">loss</span><span class="o">=</span><span class="n">criterion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">outputs</span><span class="p">[</span><span class="n">t</span><span class="p">],</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Get gradients</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+=</span><span class="n">sbatch</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Mean</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fisher</span></div>
+
+
+
+<div class="viewcode-block" id="fisher_matrix_diag_bert_dil"><a class="viewcode-back" href="../utils.html#utils.fisher_matrix_diag_bert_dil">[docs]</a><span class="k">def</span> <span class="nf">fisher_matrix_diag_bert_dil</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">train</span><span class="p">,</span><span class="n">device</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">criterion</span><span class="p">,</span><span class="n">sbatch</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="c1"># Init</span>
+    <span class="n">fisher</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Compute</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">),</span><span class="n">sbatch</span><span class="p">),</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Fisher diagonal&#39;</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="n">sbatch</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)])))</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">train</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">bat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">bat</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+        <span class="n">input_ids</span><span class="p">,</span> <span class="n">segment_ids</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span><span class="n">_</span><span class="o">=</span> <span class="n">batch</span>
+
+        <span class="c1"># Forward and backward</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">output_dict</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">segment_ids</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+
+        <span class="n">loss</span><span class="o">=</span><span class="n">criterion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Get gradients</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+=</span><span class="n">sbatch</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Mean</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fisher</span></div>
+
+<div class="viewcode-block" id="fisher_matrix_diag_cnn"><a class="viewcode-back" href="../utils.html#utils.fisher_matrix_diag_cnn">[docs]</a><span class="k">def</span> <span class="nf">fisher_matrix_diag_cnn</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">train</span><span class="p">,</span><span class="n">device</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">criterion</span><span class="p">,</span><span class="n">args</span><span class="p">,</span><span class="n">sbatch</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="c1"># Init</span>
+    <span class="n">fisher</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Compute</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">),</span><span class="n">sbatch</span><span class="p">),</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Fisher diagonal&#39;</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="n">sbatch</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)])))</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">train</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">bat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">bat</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+        <span class="n">images</span><span class="p">,</span><span class="n">targets</span><span class="o">=</span> <span class="n">batch</span>
+
+        <span class="c1"># Forward and backward</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">output_dict</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;dil&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">scenario</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s1">&#39;til&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">scenario</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+
+        <span class="n">loss</span><span class="o">=</span><span class="n">criterion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Get gradients</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+=</span><span class="n">sbatch</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Mean</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fisher</span></div>
+
+
+<div class="viewcode-block" id="fisher_matrix_diag_adapter_head"><a class="viewcode-back" href="../utils.html#utils.fisher_matrix_diag_adapter_head">[docs]</a><span class="k">def</span> <span class="nf">fisher_matrix_diag_adapter_head</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">train</span><span class="p">,</span><span class="n">device</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">criterion</span><span class="p">,</span><span class="n">sbatch</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                                <span class="n">ce</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">lamb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">mask_pre</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ewc_lamb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">model_old</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># Init</span>
+    <span class="n">fisher</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Compute</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">),</span><span class="n">sbatch</span><span class="p">),</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Fisher diagonal&#39;</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="n">sbatch</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)])))</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">train</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">bat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">bat</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+        <span class="n">input_ids</span><span class="p">,</span> <span class="n">segment_ids</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">_</span><span class="o">=</span> <span class="n">batch</span>
+
+        <span class="c1"># Forward and backward</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">output_dict</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">segment_ids</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">smax</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="n">masks</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;masks&#39;</span><span class="p">]</span>
+        <span class="n">loss</span><span class="p">,</span><span class="n">reg</span><span class="o">=</span><span class="n">criterion</span><span class="p">(</span><span class="n">ce</span><span class="p">,</span><span class="n">lamb</span><span class="p">,</span><span class="n">mask_pre</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">targets</span><span class="p">,</span><span class="n">masks</span><span class="p">,</span>
+                            <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span><span class="n">ewc_lamb</span><span class="o">=</span><span class="n">ewc_lamb</span><span class="p">,</span><span class="n">fisher</span><span class="o">=</span><span class="n">fisher</span><span class="p">,</span>
+                            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span><span class="n">model_old</span><span class="o">=</span><span class="n">model_old</span><span class="p">)</span>
+
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Get gradients</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+=</span><span class="n">sbatch</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Mean</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fisher</span></div>
+
+
+<div class="viewcode-block" id="fisher_matrix_diag_cnn_head"><a class="viewcode-back" href="../utils.html#utils.fisher_matrix_diag_cnn_head">[docs]</a><span class="k">def</span> <span class="nf">fisher_matrix_diag_cnn_head</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">train</span><span class="p">,</span><span class="n">device</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">criterion</span><span class="p">,</span><span class="n">sbatch</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                                <span class="n">ce</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">lamb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">mask_pre</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ewc_lamb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">model_old</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># Init</span>
+    <span class="n">fisher</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Compute</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">),</span><span class="n">sbatch</span><span class="p">),</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Fisher diagonal&#39;</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="n">sbatch</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)])))</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">train</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">bat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">bat</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+        <span class="n">images</span><span class="p">,</span><span class="n">targets</span><span class="o">=</span> <span class="n">batch</span>
+
+        <span class="c1"># Forward and backward</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">([</span><span class="n">t</span><span class="p">])</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">output_dict</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">task</span><span class="p">,</span><span class="n">images</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">smax</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="n">masks</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;masks&#39;</span><span class="p">]</span>
+        <span class="n">loss</span><span class="p">,</span><span class="n">reg</span><span class="o">=</span><span class="n">criterion</span><span class="p">(</span><span class="n">ce</span><span class="p">,</span><span class="n">lamb</span><span class="p">,</span><span class="n">mask_pre</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">targets</span><span class="p">,</span><span class="n">masks</span><span class="p">,</span>
+                            <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span><span class="n">ewc_lamb</span><span class="o">=</span><span class="n">ewc_lamb</span><span class="p">,</span><span class="n">fisher</span><span class="o">=</span><span class="n">fisher</span><span class="p">,</span>
+                            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span><span class="n">model_old</span><span class="o">=</span><span class="n">model_old</span><span class="p">)</span>
+
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Get gradients</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+=</span><span class="n">sbatch</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Mean</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fisher</span></div>
+
+<div class="viewcode-block" id="fisher_matrix_diag_w2v"><a class="viewcode-back" href="../utils.html#utils.fisher_matrix_diag_w2v">[docs]</a><span class="k">def</span> <span class="nf">fisher_matrix_diag_w2v</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">train</span><span class="p">,</span><span class="n">device</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">criterion</span><span class="p">,</span><span class="n">args</span><span class="p">,</span><span class="n">sbatch</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="c1"># Init</span>
+    <span class="n">fisher</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Compute</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">),</span><span class="n">sbatch</span><span class="p">),</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Fisher diagonal&#39;</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="n">sbatch</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)])))</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">train</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bat</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">bat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">bat</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+        <span class="n">tokens_term_ids</span><span class="p">,</span> <span class="n">tokens_sentence_ids</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span> <span class="n">batch</span>
+
+        <span class="c1"># Forward and backward</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">output_dict</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">tokens_term_ids</span><span class="p">,</span> <span class="n">tokens_sentence_ids</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">&#39;dil&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">scenario</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s1">&#39;til&#39;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">scenario</span><span class="p">:</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">output_dict</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+        <span class="n">loss</span><span class="o">=</span><span class="n">criterion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">output</span><span class="p">,</span><span class="n">targets</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Get gradients</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+=</span><span class="n">sbatch</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Mean</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fisher</span></div>
+
+<div class="viewcode-block" id="fisher_matrix_diag"><a class="viewcode-back" href="../utils.html#utils.fisher_matrix_diag">[docs]</a><span class="k">def</span> <span class="nf">fisher_matrix_diag</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">criterion</span><span class="p">,</span><span class="n">sbatch</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="c1"># Init</span>
+    <span class="n">fisher</span><span class="o">=</span><span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">data</span>
+    <span class="c1"># Compute</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="n">sbatch</span><span class="p">),</span><span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Fisher diagonal&#39;</span><span class="p">,</span><span class="n">ncols</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">i</span><span class="o">+</span><span class="n">sbatch</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)])))</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+        <span class="n">images</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="n">volatile</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="n">volatile</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Forward and backward</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">=</span><span class="n">criterion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">outputs</span><span class="p">[</span><span class="n">t</span><span class="p">],</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="c1"># Get gradients</span>
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">+=</span><span class="n">sbatch</span><span class="o">*</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Mean</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">/</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">fisher</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">requires_grad</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fisher</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="cross_entropy"><a class="viewcode-back" href="../utils.html#utils.cross_entropy">[docs]</a><span class="k">def</span> <span class="nf">cross_entropy</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span><span class="n">targets</span><span class="p">,</span><span class="n">exp</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">size_average</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+    <span class="n">tar</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">exp</span><span class="o">!=</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="o">/</span><span class="n">out</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="n">tar</span><span class="o">=</span><span class="n">tar</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+        <span class="n">tar</span><span class="o">=</span><span class="n">tar</span><span class="o">/</span><span class="n">tar</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">tar</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="o">+</span><span class="n">eps</span><span class="o">/</span><span class="n">out</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="o">/</span><span class="n">out</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="n">ce</span><span class="o">=-</span><span class="p">(</span><span class="n">tar</span><span class="o">*</span><span class="n">out</span><span class="o">.</span><span class="n">log</span><span class="p">())</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">size_average</span><span class="p">:</span>
+        <span class="n">ce</span><span class="o">=</span><span class="n">ce</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ce</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="set_req_grad"><a class="viewcode-back" href="../utils.html#utils.set_req_grad">[docs]</a><span class="k">def</span> <span class="nf">set_req_grad</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span><span class="n">req_grad</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span><span class="s1">&#39;weight&#39;</span><span class="p">):</span>
+        <span class="n">layer</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">requires_grad</span><span class="o">=</span><span class="n">req_grad</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span><span class="s1">&#39;bias&#39;</span><span class="p">):</span>
+        <span class="n">layer</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">requires_grad</span><span class="o">=</span><span class="n">req_grad</span>
+    <span class="k">return</span></div>
+
+<span class="c1">########################################################################################################################</span>
+
+<div class="viewcode-block" id="is_number"><a class="viewcode-back" href="../utils.html#utils.is_number">[docs]</a><span class="k">def</span> <span class="nf">is_number</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">unicodedata</span>
+        <span class="n">unicodedata</span><span class="o">.</span><span class="n">numeric</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="kc">False</span></div>
+<span class="c1">########################################################################################################################</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Felipe Andrade &amp; Isabella Carneiro.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
