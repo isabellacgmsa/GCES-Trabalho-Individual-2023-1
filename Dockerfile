@@ -1,5 +1,5 @@
 # Definir a imagem base com Python
-FROM python:3.9
+FROM python:3.7.11
 
 # Criar e definir o diretório de trabalho
 WORKDIR /src

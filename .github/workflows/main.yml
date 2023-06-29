@@ -4,18 +4,16 @@ on:
   push:
     branches:
       - master
-  tags:
-    - '*'
-
+      
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Python 3.9
+    - name: Set up Python 3.7.11
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: 3.7.11
 
     - name: Install dependencies
       run: |
@@ -29,10 +27,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Python 3.9
+    - name: Set up Python 3.7.11
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: 3.7.11
 
     - name: Install dependencies
       run: |
@@ -46,10 +44,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Python 3.9
+    - name: Set up Python 3.7.11
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: 3.7.11
 
     - name: Install dependencies
       run: |
@@ -63,10 +61,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Python 3.9
+    - name: Set up Python 3.7.11
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: 3.7.11
 
     - name: Install dependencies
       run: |
